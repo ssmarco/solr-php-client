@@ -1,5 +1,5 @@
 {
-	"name": "ptcinc/solr-php-client",
+	"name": "silverstripe/solr-php-client",
 	"description": "A purely PHP library for indexing and searching documents against an Apache Solr installation",
 	"keywords": ["php", "solr", "client"],
 	"license": "BSD-3-Clause",
@@ -9,6 +9,9 @@
 			"homepage": "https://github.com/djimenez"
 		}
 	],
+	"replace": {
+		"ptcinc/solr-php-client": "^1.0"
+	},
 	"autoload": {
 		"psr-0": {
 			"Apache_Solr_": ""
