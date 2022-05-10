@@ -9,6 +9,9 @@
 			"homepage": "https://github.com/djimenez"
 		}
 	],
+	"require-dev": {
+		"phpunit/phpunit": "9.5"
+	},
 	"replace": {
 		"ptcinc/solr-php-client": "^1.0"
 	},

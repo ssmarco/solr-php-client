@@ -35,10 +35,12 @@
  * @author Donovan Jimenez <djimenez@conduit-it.com>
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Apache_Solr_Response Unit Test
  */
-class Apache_Solr_ResponseTest extends PHPUnit_Framework_TestCase
+class Apache_Solr_ResponseTest extends TestCase
 {
 	static public function get0Response($createDocuments = true, $collapseSingleValueArrays = true)
 	{
@@ -103,14 +105,12 @@ class Apache_Solr_ResponseTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(0, $fixture->response->numFound);
 
 		$this->assertTrue(is_array($fixture->response->docs));
-		$this->assertEquals(0, count($fixture->response->docs));
+		$this->assertEquals(0, count($fixture->response->docs ?? []));
 	}
 
-	/**
-	 * @expectedException Apache_Solr_ParserException
-	 */
 	public function testMagicGetWith0Response()
 	{
+		$this->expectException(Apache_Solr_ParserException::class);
 		$fixture = self::get0Response();
 
 		// attempting to magic get a part of the response
@@ -120,11 +120,9 @@ class Apache_Solr_ResponseTest extends PHPUnit_Framework_TestCase
 		$this->fail("Expected Apache_Solr_ParserException was not raised");
 	}
 
-	/**
-	 * @expectedException Apache_Solr_ParserException
-	 */
 	public function testMagicGetWith400Response()
 	{
+		$this->expectException(Apache_Solr_ParserException::class);
 		$fixture = self::get400Response();
 
 		// attempting to magic get a part of the response
@@ -134,11 +132,9 @@ class Apache_Solr_ResponseTest extends PHPUnit_Framework_TestCase
 		$this->fail("Expected Apache_Solr_ParserException was not raised");
 	}
 
-	/**
-	 * @expectedException Apache_Solr_ParserException
-	 */
 	public function testMagicGetWith404Response()
 	{
+		$this->expectException(Apache_Solr_ParserException::class);
 		$fixture = self::get404Response();
 
 		// attempting to magic get a part of the response
@@ -152,7 +148,7 @@ class Apache_Solr_ResponseTest extends PHPUnit_Framework_TestCase
 	{
 		$fixture = self::get200ResponseWithDocuments();
 
-		$this->assertTrue(count($fixture->response->docs) > 0, 'There are not 1 or more documents, cannot test');
+		$this->assertTrue(count($fixture->response->docs ?? []) > 0, 'There are not 1 or more documents, cannot test');
 		$this->assertInstanceOf('Apache_Solr_Document', $fixture->response->docs[0], 'The first document is not of type Apache_Solr_Document');
 	}
 	
@@ -160,7 +156,7 @@ class Apache_Solr_ResponseTest extends PHPUnit_Framework_TestCase
 	{
 		$fixture = self::get200ResponseWithDocuments(false);
 
-		$this->assertTrue(count($fixture->response->docs) > 0, 'There are not 1 or more documents, cannot test');
+		$this->assertTrue(count($fixture->response->docs ?? []) > 0, 'There are not 1 or more documents, cannot test');
 		$this->assertInstanceOf('stdClass', $fixture->response->docs[0], 'The first document is not of type stdClass');
 	}
 	

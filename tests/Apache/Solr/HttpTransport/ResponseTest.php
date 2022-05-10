@@ -35,10 +35,12 @@
  * @author Donovan Jimenez <djimenez@conduit-it.com>
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Apache_Solr_HttpTransport_Response Unit Tests
  */
-class Apache_Solr_HttpTransport_ResponseTest extends PHPUnit_Framework_TestCase
+class Apache_Solr_HttpTransport_ResponseTest extends TestCase
 {
 	// generated with the following query string: select?q=solr&wt=json
 	const STATUS_CODE_200 = 200;
