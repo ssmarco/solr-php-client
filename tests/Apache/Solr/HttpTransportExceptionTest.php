@@ -35,16 +35,16 @@
  * @author Donovan Jimenez <djimenez@conduit-it.com>
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Apache_Solr_HttpTransportException Unit Tests
  */
-class Apache_Solr_HttpTransportExceptionTest extends PHPUnit_Framework_TestCase
+class Apache_Solr_HttpTransportExceptionTest extends TestCase
 {
-	/**
-	 * @expectedException PHPUnit_Framework_Error
-	 */
 	public function testConstructorRequiresResponse()
 	{
+		$this->expectException(\TypeError::class);
 		$fixture = new Apache_Solr_HttpTransportException();
 	}
 	

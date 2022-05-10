@@ -35,17 +35,27 @@
  * @author Donovan Jimenez <djimenez@conduit-it.com>
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Provides base funcationality test for both Apache_Solr_Service and the
  * Apache_Solr_Service_Balancer classes. 
  */
-abstract class Apache_Solr_ServiceAbstractTest extends PHPUnit_Framework_TestCase
+abstract class Apache_Solr_ServiceAbstractTest extends TestCase
 {
 	/**
 	 * Method that gets the appropriate instance for testing
 	 */
 	abstract public function getFixture();
 	
+	/**
+	 * PHPUnit 5.7 -> 9.5 adapter
+	 */
+	public function getMock()
+	{
+		return $this->createMock(...func_get_args());
+	}
+
 	/**
 	 * @dataProvider testEscapeDataProvider
 	 */
@@ -56,6 +66,9 @@ abstract class Apache_Solr_ServiceAbstractTest extends PHPUnit_Framework_TestCas
 		$this->assertEquals($expectedOutput, $fixture->escape($input));
 	}
 	
+	/**
+	 * @doesNotPerformAssertions
+	 */
 	public function testEscapeDataProvider()
 	{
 		return array(
@@ -80,7 +93,10 @@ abstract class Apache_Solr_ServiceAbstractTest extends PHPUnit_Framework_TestCas
 		
 		$this->assertEquals($expectedOutput, $fixture->escapePhrase($input));
 	}
-	
+
+	/**
+	 * @doesNotPerformAssertions
+	 */
 	public function testEscapePhraseDataProvider()
 	{
 		return array(
@@ -106,6 +122,9 @@ abstract class Apache_Solr_ServiceAbstractTest extends PHPUnit_Framework_TestCas
 		$this->assertEquals($expectedOutput, $fixture->phrase($input));
 	}
 	
+	/**
+	 * @doesNotPerformAssertions
+	 */
 	public function testPhraseDataProvider()
 	{
 		return array(

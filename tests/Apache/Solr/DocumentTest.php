@@ -35,10 +35,12 @@
  * @author Donovan Jimenez <djimenez@conduit-it.com>
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Apache_Solr_Document Unit Test
  */
-class Apache_Solr_DocumentTest extends PHPUnit_Framework_TestCase
+class Apache_Solr_DocumentTest extends TestCase
 {
 	/**
 	 * Fixture used for testing
@@ -50,7 +52,7 @@ class Apache_Solr_DocumentTest extends PHPUnit_Framework_TestCase
 	/**
 	 * Setup for the fixture before each unit test - part of test case API
 	 */
-	protected function setup()
+	protected function setup(): void
 	{
 		$this->_fixture = new Apache_Solr_Document();
 	}
@@ -58,7 +60,7 @@ class Apache_Solr_DocumentTest extends PHPUnit_Framework_TestCase
 	/**
 	 * Teardown after each unit test - part of test case API
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		unset($this->_fixture);
 	}
@@ -69,9 +71,9 @@ class Apache_Solr_DocumentTest extends PHPUnit_Framework_TestCase
 		$this->assertFalse($this->_fixture->getBoost());
 
 		// document fields should be empty
-		$this->assertEquals(0, count($this->_fixture->getFieldNames()));
-		$this->assertEquals(0, count($this->_fixture->getFieldValues()));
-		$this->assertEquals(0, count($this->_fixture->getFieldBoosts()));
+		$this->assertEquals(0, count($this->_fixture->getFieldNames() ?? []));
+		$this->assertEquals(0, count($this->_fixture->getFieldValues() ?? []));
+		$this->assertEquals(0, count($this->_fixture->getFieldBoosts() ?? []));
 
 		// document iterator should be empty
 		$this->assertEquals(0, iterator_count($this->_fixture));
@@ -257,7 +259,7 @@ class Apache_Solr_DocumentTest extends PHPUnit_Framework_TestCase
 		$fieldValue = $this->_fixture->{$field};
 
 		$this->assertTrue(is_array($fieldValue));
-		$this->assertEquals(1, count($fieldValue));
+		$this->assertEquals(1, count($fieldValue ?? []));
 		$this->assertEquals($value, $fieldValue[0]);
 	}
 
@@ -277,7 +279,7 @@ class Apache_Solr_DocumentTest extends PHPUnit_Framework_TestCase
 		$fieldValue = $this->_fixture->{$field};
 
 		$this->assertTrue(is_array($fieldValue));
-		$this->assertEquals(1, count($fieldValue));
+		$this->assertEquals(1, count($fieldValue ?? []));
 		$this->assertEquals($value, $fieldValue[0]);
 	}
 
@@ -297,7 +299,7 @@ class Apache_Solr_DocumentTest extends PHPUnit_Framework_TestCase
 		$fieldValue = $this->_fixture->{$field};
 
 		$this->assertTrue(is_array($fieldValue));
-		$this->assertEquals(2, count($fieldValue));
+		$this->assertEquals(2, count($fieldValue ?? []));
 		$this->assertEquals($value1, $fieldValue[0]);
 		$this->assertEquals($value2, $fieldValue[1]);
 	}
@@ -323,7 +325,7 @@ class Apache_Solr_DocumentTest extends PHPUnit_Framework_TestCase
 		$fieldValue = $this->_fixture->{$field};
 
 		$this->assertTrue(is_array($fieldValue));
-		$this->assertEquals(2, count($fieldValue));
+		$this->assertEquals(2, count($fieldValue ?? []));
 		$this->assertEquals($value1, $fieldValue[0]);
 		$this->assertEquals($value2, $fieldValue[1]);
 	}
@@ -369,7 +371,7 @@ class Apache_Solr_DocumentTest extends PHPUnit_Framework_TestCase
 		$fieldNames = $this->_fixture->getFieldNames();
 
 		$this->assertTrue(!empty($fieldNames));
-		$this->assertEquals(1, count($fieldNames));
+		$this->assertEquals(1, count($fieldNames ?? []));
 		$this->assertEquals($field, $fieldNames[0]);
 	}
 
@@ -388,7 +390,7 @@ class Apache_Solr_DocumentTest extends PHPUnit_Framework_TestCase
 		$fieldValues = $this->_fixture->getFieldValues();
 
 		$this->assertTrue(!empty($fieldValues));
-		$this->assertEquals(1, count($fieldValues));
+		$this->assertEquals(1, count($fieldValues ?? []));
 		$this->assertEquals($value, $fieldValues[0]);
 	}
 
@@ -429,9 +431,9 @@ class Apache_Solr_DocumentTest extends PHPUnit_Framework_TestCase
 		$this->assertFalse($this->_fixture->getBoost());
 
 		// document fields should now be empty
-		$this->assertEquals(0, count($this->_fixture->getFieldNames()));
-		$this->assertEquals(0, count($this->_fixture->getFieldValues()));
-		$this->assertEquals(0, count($this->_fixture->getFieldBoosts()));
+		$this->assertEquals(0, count($this->_fixture->getFieldNames() ?? []));
+		$this->assertEquals(0, count($this->_fixture->getFieldValues() ?? []));
+		$this->assertEquals(0, count($this->_fixture->getFieldBoosts() ?? []));
 
 		// document iterator should now be empty
 		$this->assertEquals(0, iterator_count($this->_fixture));

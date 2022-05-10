@@ -35,26 +35,26 @@
  * @author Donovan Jimenez <djimenez@conduit-it.com>
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Apache_Solr_HttpTransport_Abstract Unit Tests
  */
-abstract class Apache_Solr_HttpTransport_AbstractTest extends PHPUnit_Framework_TestCase
+abstract class Apache_Solr_HttpTransport_AbstractTest extends TestCase
 {	
 	const TIMEOUT = 2;
 	
-	// request our copyright file from googlecode for GET and HEAD
-	const GET_URL = "http://solr-php-client.googlecode.com/svn/trunk/COPYING";
-	const GET_RESPONSE_MIME_TYPE = 'text/plain';
-	const GET_RESPONSE_ENCODING = 'UTF-8';
-	const GET_RESPONSE_MATCH = 'Copyright (c) ';
+	const GET_URL = "https://postman-echo.com/get";
+	const GET_RESPONSE_MIME_TYPE = 'application/json';
+	const GET_RESPONSE_ENCODING = 'utf-8';
+	const GET_RESPONSE_MATCH = '{"args":{},"headers":{"x-forwarded-proto":"https","x-forwarded-port":"443","host":"postman-echo.com"';
 	
-	// post to the issue list page with a search for 'meh'
-	const POST_URL = "http://code.google.com/p/solr-php-client/issues/list";
+	const POST_URL = "https://postman-echo.com/post";
 	const POST_DATA = "can=2&q=meh&colspec=ID+Type+Status+Priority+Milestone+Owner+Summary&cells=tiles";
 	const POST_REQUEST_CONTENT_TYPE = 'application/x-www-form-urlencoded; charset=UTF-8';
 	
-	const POST_RESPONSE_MIME_TYPE = 'text/html';
-	const POST_RESPONSE_ENCODING = 'UTF-8';
+	const POST_RESPONSE_MIME_TYPE = 'application/json';
+	const POST_RESPONSE_ENCODING = 'utf-8';
 	//const POST_RESPONSE_MATCH = 'not sure';
 	
 	abstract public function getFixture();

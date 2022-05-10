@@ -136,11 +136,9 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 		$this->assertEquals(Apache_Solr_Service::NAMED_LIST_MAP, $fixture->getNamedListTreatment());
 	}
 	
-	/**
-	 * @expectedException Apache_Solr_InvalidArgumentException
-	 */
 	public function testSetNamedListTreatmentInvalidArgumentException()
 	{
+		$this->expectException(Apache_Solr_InvalidArgumentException::class);
 		$fixture = $this->getFixture();
 		
 		$fixture->setNamedListTreatment("broken");
@@ -178,11 +176,9 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 		$this->assertEquals($newHost, $host);
 	}
 	
-	/**
-	 * @expectedException Apache_Solr_InvalidArgumentException
-	 */
 	public function testSetEmptyHost()
 	{
+		$this->expectException(Apache_Solr_InvalidArgumentException::class);
 		$fixture = new Apache_Solr_Service();
 		
 		// should throw an invalid argument exception
@@ -218,11 +214,9 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 		$this->assertEquals($newPort, $port);
 	}
 	
-	/**
-	 * @expectedException Apache_Solr_InvalidArgumentException
-	 */
 	public function testSetPortWithInvalidArgument()
 	{
+		$this->expectException(Apache_Solr_InvalidArgumentException::class);
 		$fixture = new Apache_Solr_Service();
 		
 		$fixture->setPort("broken");
@@ -390,11 +384,9 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 		$fixture->system();
 	}
 	
-	/**
-	 * @expectedException Apache_Solr_HttpTransportException
-	 */
 	public function testSystem404()
 	{
+		$this->expectException(Apache_Solr_HttpTransportException::class);
 		$expectedUrl = "http://localhost:8180/solr/admin/system?wt=json";
 		$expectedTimeout = false;
 		
@@ -433,11 +425,9 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 		$fixture->threads();
 	}
 	
-	/**
-	 * @expectedException Apache_Solr_HttpTransportException
-	 */
 	public function testThreads404()
 	{
+		$this->expectException(Apache_Solr_HttpTransportException::class);
 		$expectedUrl = "http://localhost:8180/solr/admin/threads?wt=json";
 		$expectedTimeout = false;
 		
@@ -480,11 +470,9 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 		$fixture->add($postData);
 	}
 	
-	/**
-	 * @expectedException Apache_Solr_HttpTransportException
-	 */
 	public function testAdd400()
 	{
+		$this->expectException(Apache_Solr_HttpTransportException::class);
 		$postData = "does not have to be valid";
 		
 		$expectedUrl = "http://localhost:8180/solr/update?wt=json";
@@ -881,7 +869,7 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 		$extractFile = __FILE__;
 		
 		$expectedUrl = "http://localhost:8180/solr/update/extract?resource.name=ServiceTest.php&wt=json&json.nl=map";
-		$expectedPostData = file_get_contents($extractFile);
+		$expectedPostData = file_get_contents($extractFile ?? '');
 		$expectedContentType = 'application/octet-stream'; // default for extract
 		$expectedTimeout = false;
 		
@@ -900,11 +888,9 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 		$fixture->extract($extractFile);
 	}
 	
-	/**
-	 * @expectedException Apache_Solr_InvalidArgumentException
-	 */
 	public function testExtractWithInvalidParams()
 	{
+		$this->expectException(Apache_Solr_InvalidArgumentException::class);
 		$extractFile = __FILE__;
 		
 		// set a mock transport
@@ -916,11 +902,9 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 		$fixture->extract($extractFile, "invalid");
 	}
 	
-	/**
-	 * @expectedException Apache_Solr_InvalidArgumentException
-	 */
 	public function testExtractFromStringWithInvalidParams()
 	{
+		$this->expectException(Apache_Solr_InvalidArgumentException::class);
 		$extractFileData = "does not matter what it is";
 		
 		// set a mock transport
@@ -937,7 +921,7 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 		$extractFile = __FILE__;
 		
 		$expectedUrl = "http://localhost:8180/solr/update/extract?resource.name=ServiceTest.php&wt=json&json.nl=map";
-		$expectedPostData = file_get_contents($extractFile);
+		$expectedPostData = file_get_contents($extractFile ?? '');
 		$expectedContentType = 'application/octet-stream'; // default for extract
 		$expectedTimeout = false;
 		
@@ -956,11 +940,9 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 		$fixture->extract($extractFile, null);
 	}
 	
-	/**
-	 * @expectedException Apache_Solr_InvalidArgumentException
-	 */
 	public function testExtractWithEmptyFile()
 	{
+		$this->expectException(Apache_Solr_InvalidArgumentException::class);
 		$extractFile = "iDontExist.txt";
 				
 		// set a mock transport
@@ -977,7 +959,7 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 		$extractFile = __FILE__;
 		
 		$expectedUrl = "http://localhost:8180/solr/update/extract?resource.name=ServiceTest.php&wt=json&json.nl=map&boost.field=2&literal.field=literal+value";
-		$expectedPostData = file_get_contents($extractFile);
+		$expectedPostData = file_get_contents($extractFile ?? '');
 		$expectedContentType = 'application/octet-stream'; // default for extract
 		$expectedTimeout = false;
 		
@@ -1072,11 +1054,9 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 		$fixture->extractFromUrl($extractUrl);
 	}
 	
-	/**
-	 * @expectedException Apache_Solr_InvalidArgumentException
-	 */
 	public function testExtractFromUrlWithInvalidParams()
 	{
+		$this->expectException(Apache_Solr_InvalidArgumentException::class);
 		$extractUrl = "http://example.com";
 		
 		// set a mock transport
@@ -1120,11 +1100,9 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 		$fixture->search("solr");
 	}
 	
-	/**
-	 * @expectedException Apache_Solr_InvalidArgumentException
-	 */
 	public function testSearchWithInvalidParams()
 	{
+		$this->expectException(Apache_Solr_InvalidArgumentException::class);
 		// set a mock transport
 		$mockTransport = $this->getMockHttpTransportInterface();
 		
@@ -1168,11 +1146,9 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 		$fixture->search("solr", 0, 10, array(), Apache_Solr_Service::METHOD_POST);
 	}
 	
-	/**
-	 * @expectedException Apache_Solr_InvalidArgumentException
-	 */
 	public function testSearchWithInvalidMethod()
 	{
+		$this->expectException(Apache_Solr_InvalidArgumentException::class);
 		$fixture = new Apache_Solr_service();
 		
 		$fixture->search("solr", 0, 10, array(), "INVALID METHOD");
