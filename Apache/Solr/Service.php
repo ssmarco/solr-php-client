@@ -1,31 +1,31 @@
 <?php
 /**
  * Copyright (c) 2007-2013, PTC Inc.
- * All rights reserved. 
- * 
- * Redistribution and use in source and binary forms, with or without 
- * modification, are permitted provided that the following conditions are met: 
- * 
- *  - Redistributions of source code must retain the above copyright notice, 
- *    this list of conditions and the following disclaimer. 
- *  - Redistributions in binary form must reproduce the above copyright 
- *    notice, this list of conditions and the following disclaimer in the 
- *    documentation and/or other materials provided with the distribution. 
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *  - Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
  *  - Neither the name of PTC Inc. nor the names of its contributors may be
  *    used to endorse or promote products derived from this software without
- *    specific prior written permission. 
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
- * POSSIBILITY OF SUCH DAMAGE. 
+ *    specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  *
  * @copyright Copyright 2007-2013 PTC Inc. (http://ptc.com)
  * @license https://raw.github.com/PTCInc/solr-php-client/master/COPYING 3-Clause BSD
@@ -37,6 +37,9 @@
 
 // See Issue #1 (http://code.google.com/p/solr-php-client/issues/detail?id=1)
 // Doesn't follow typical include path conventions, but is more convenient for users
+use Psr\Log\LoggerInterface;
+use SilverStripe\Core\Injector\Injector;
+
 require_once(dirname(__FILE__) . '/Exception.php');
 require_once(dirname(__FILE__) . '/HttpTransportException.php');
 require_once(dirname(__FILE__) . '/InvalidArgumentException.php');
@@ -356,6 +359,9 @@ class Apache_Solr_Service
 	 */
 	protected function _sendRawPost($url, $rawPost, $timeout = FALSE, $contentType = 'text/xml; charset=UTF-8')
 	{
+        $logger = Injector::inst()->get(LoggerInterface::class);
+        $logger->error('Solr: Raw POST');
+        $logger->error('Solr:' . $rawPost);
 		$httpTransport = $this->getHttpTransport();
 
 		$httpResponse = $httpTransport->performPostRequest($url, $rawPost, $contentType, $timeout);
@@ -363,9 +369,12 @@ class Apache_Solr_Service
 
 		if ($solrResponse->getHttpStatus() != 200)
 		{
+            $logger->error('Solr: Response failed: ' . $solrResponse->getHttpStatus());
 			throw new Apache_Solr_HttpTransportException($solrResponse);
 		}
 
+        $logger->error('Solr: Raw Response');
+        $logger->error('Solr:' . $solrResponse->getRawResponse());
 		return $solrResponse;
 	}
 
@@ -600,10 +609,10 @@ class Apache_Solr_Service
 	{
 		$this->getHttpTransport()->setDefaultTimeout($timeout);
 	}
-	
+
 	/**
 	 * Convenience method to set authentication credentials on the current HTTP transport implementation
-	 * 
+	 *
 	 * @param string $username
 	 * @param string $password
 	 */
@@ -678,7 +687,7 @@ class Apache_Solr_Service
 	public function ping($timeout = 2)
 	{
 		$start = microtime(true);
-		
+
 		$httpTransport = $this->getHttpTransport();
 
 		$httpResponse = $httpTransport->performHeadRequest($this->_pingUrl, $timeout);
@@ -693,10 +702,10 @@ class Apache_Solr_Service
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Call the /admin/system servlet and retrieve system information about Solr
-	 * 
+	 *
 	 * @return Apache_Solr_Response
 	 *
 	 * @throws Apache_Solr_HttpTransportException If an error occurs during the service call
@@ -750,13 +759,16 @@ class Apache_Solr_Service
 		$dupValue = $allowDups ? 'true' : 'false';
 		$pendingValue = $overwritePending ? 'true' : 'false';
 		$committedValue = $overwriteCommitted ? 'true' : 'false';
-		
+
 		$commitWithin = (int) $commitWithin;
 		$commitWithinString = $commitWithin > 0 ? " commitWithin=\"{$commitWithin}\"" : '';
-		
+
 		$rawPost = "<add allowDups=\"{$dupValue}\" overwritePending=\"{$pendingValue}\" overwriteCommitted=\"{$committedValue}\"{$commitWithinString}>";
 		$rawPost .= $this->_documentToXmlFragment($document);
 		$rawPost .= '</add>';
+
+        $logger = Injector::inst()->get(LoggerInterface::class);
+        $logger->error('Solr: Add Document - ' . $rawPost);
 
 		return $this->add($rawPost);
 	}
@@ -793,6 +805,9 @@ class Apache_Solr_Service
 		}
 
 		$rawPost .= '</add>';
+
+        $logger = Injector::inst()->get(LoggerInterface::class);
+        $logger->error('Solr: Add Documents - ' . $rawPost);
 
 		return $this->add($rawPost);
 	}
@@ -929,6 +944,9 @@ class Apache_Solr_Service
 
 		$rawPost = '<delete fromPending="' . $pendingValue . '" fromCommitted="' . $committedValue . '"><id>' . $id . '</id></delete>';
 
+        $logger = Injector::inst()->get(LoggerInterface::class);
+        $logger->error('Solr: deleteById - ' . $rawPost);
+
 		return $this->delete($rawPost, $timeout);
 	}
 
@@ -960,6 +978,9 @@ class Apache_Solr_Service
 
 		$rawPost .= '</delete>';
 
+        $logger = Injector::inst()->get(LoggerInterface::class);
+        $logger->error('Solr: deleteByMultipleIds - ' . $rawPost);
+
 		return $this->delete($rawPost, $timeout);
 	}
 
@@ -983,6 +1004,9 @@ class Apache_Solr_Service
 		$rawQuery = htmlspecialchars($rawQuery, ENT_NOQUOTES, 'UTF-8');
 
 		$rawPost = '<delete fromPending="' . $pendingValue . '" fromCommitted="' . $committedValue . '"><query>' . $rawQuery . '</query></delete>';
+
+        $logger = Injector::inst()->get(LoggerInterface::class);
+        $logger->error('Solr: deleteByQuery - ' . $rawPost);
 
 		return $this->delete($rawPost, $timeout);
 	}
@@ -1019,13 +1043,13 @@ class Apache_Solr_Service
 		{
 			$params = array();
 		}
-		
+
 		// if $file is an http request, defer to extractFromUrl instead
 		if (substr($file, 0, 7) == 'http://' || substr($file, 0, 8) == 'https://')
 		{
 			return $this->extractFromUrl($file, $params, $document, $mimetype);
 		}
-		
+
 		// read the contents of the file
 		$contents = @file_get_contents($file);
 
@@ -1045,7 +1069,7 @@ class Apache_Solr_Service
 			throw new Apache_Solr_InvalidArgumentException("File '{$file}' is empty or could not be read");
 		}
 	}
-	
+
 	/**
 	 * Use Solr Cell to extract document contents. See {@link http://wiki.apache.org/solr/ExtractingRequestHandler} for information on how
 	 * to use Solr Cell and what parameters are available.
@@ -1110,7 +1134,7 @@ class Apache_Solr_Service
 		// the file contents will be sent to SOLR as the POST BODY - we use application/octect-stream as default mimetype
 		return $this->_sendRawPost($this->_extractUrl . $this->_queryDelimiter . $queryString, $data, false, $mimetype);
 	}
-	
+
 	/**
 	 * Use Solr Cell to extract document contents. See {@link http://wiki.apache.org/solr/ExtractingRequestHandler} for information on how
 	 * to use Solr Cell and what parameters are available.
@@ -1145,10 +1169,10 @@ class Apache_Solr_Service
 		}
 
 		$httpTransport = $this->getHttpTransport();
-		
+
 		// read the contents of the URL using our configured Http Transport and default timeout
 		$httpResponse = $httpTransport->performGetRequest($url);
-		
+
 		// check that its a 200 response
 		if ($httpResponse->getStatusCode() == 200)
 		{
@@ -1185,6 +1209,9 @@ class Apache_Solr_Service
 
 		$rawPost = '<optimize waitFlush="' . $flushValue . '" waitSearcher="' . $searcherValue . '" />';
 
+        $logger = Injector::inst()->get(LoggerInterface::class);
+        $logger->error('Solr: optimize - ' . $rawPost);
+
 		return $this->_sendRawPost($this->_updateUrl, $rawPost, $timeout);
 	}
 
@@ -1216,7 +1243,7 @@ class Apache_Solr_Service
 		{
 			$params = array();
 		}
-		
+
 		// construct our full parameters
 
 		// common parameters in this interface
